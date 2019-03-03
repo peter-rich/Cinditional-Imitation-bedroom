@@ -13,4 +13,11 @@ After downloading the Visual Genome dataset, we need to preprocess it. This will
 ### Train:
 `bash run.sh`
 
+### Test:
+You can use the script scripts/run_model.py to run the model on arbitrary scene graphs specified in a simple JSON format. For example to generate images for the scene graphs used in Figure 5 of the paper you can run:
+
+`python scripts/run_model.py \
+  --checkpoint checkpoint_with_model.pt \
+  --scene_graphs_json scene_graphs/figure_5_vg.json
+`
 ## Cinditional-Imitation-bedroom
