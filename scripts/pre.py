@@ -54,15 +54,15 @@ parser.add_argument('--min_image_size', default=200, type=int)
 parser.add_argument('--train_split', default='train')
 
 # Arguments for objects
-parser.add_argument('--min_object_instances', default=200, type=int)
-parser.add_argument('--min_attribute_instances', default=200, type=int)
-parser.add_argument('--min_object_size', default=8, type=int)
-parser.add_argument('--min_objects_per_image', default=1, type=int)
+parser.add_argument('--min_object_instances', default=2000, type=int)
+parser.add_argument('--min_attribute_instances', default=2000, type=int)
+parser.add_argument('--min_object_size', default=32, type=int)
+parser.add_argument('--min_objects_per_image', default=3, type=int)
 parser.add_argument('--max_objects_per_image', default=30, type=int)
 parser.add_argument('--max_attributes_per_image', default=30, type=int)
 
 # Arguments for relationships
-parser.add_argument('--min_relationship_instances', default=50, type=int)
+parser.add_argument('--min_relationship_instances', default=500, type=int)
 parser.add_argument('--min_relationships_per_image', default=1, type=int)
 parser.add_argument('--max_relationships_per_image', default=30, type=int)
 
@@ -77,22 +77,19 @@ def main(args):
   with open(args.images_json, 'r') as f:
     images = json.load(f)
   image_id_to_image = {i['image_id']: i for i in images}
-  
-  with open(args.objects_json, 'r') as f:
-    objects = json.load(f)
-  image_id_to_object = {i['image_id']: i for i in objects}
-  
+
   with open(args.splits_json, 'r') as f:
     splits = json.load(f)
 
-  splits = remove_other_images(args, image_id_to_image, image_id_to_object, splits)
   # Filter images for being too small
-  #splits = remove_small_images(args, image_id_to_image, splits)
-  
+  splits = remove_small_images(args, image_id_to_image, splits)
+
   obj_aliases = load_aliases(args.object_aliases)
   rel_aliases = load_aliases(args.relationship_aliases)
 
   print('Loading objects from "%s"' % args.objects_json)
+  with open(args.objects_json, 'r') as f:
+    objects = json.load(f)
 
   # Vocab for objects and relationships
   vocab = {}
@@ -143,35 +140,6 @@ def main(args):
   print('Writing vocab to "%s"' % args.output_vocab_json)
   with open(args.output_vocab_json, 'w') as f:
     json.dump(vocab, f)
-
-def remove_other_images(args, image_id_to_image, image_id_to_object, splits):
-        new_splits = {}
-        for split_name, image_ids in splits.items():
-            new_image_ids = []
-            num_skipped = 0
-            for image_id in image_ids:
-                image = image_id_to_object[image_id]
-                objects =  image['objects']
-                judge = 0
-                image2 = image_id_to_image[image_id]
-                height, width = image2['height'], image2['width']
-                
-                for i in objects:
-                    if i['names'][0] == "bed" or i['names'][0] == "lamp":
-                        judge = 1
-                        break
-
-                if min(height, width) < args.min_image_size:
-                    judge = 0
-                    
-                if judge == 0:
-                    num_skipped += 1
-                    continue
-                new_image_ids.append(image_id)
-            new_splits[split_name] = new_image_ids
-            print('Removed %d images from split "%s" for being too small' %
-          (num_skipped, split_name))
-        return new_splits
 
 def remove_small_images(args, image_id_to_image, splits):
   new_splits = {}
@@ -541,3 +509,4 @@ def encode_graphs(args, splits, objects, relationships, vocab,
 if __name__ == '__main__':
   args = parser.parse_args()
   main(args)
+

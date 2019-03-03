@@ -45,15 +45,15 @@ VG_DIR = os.path.expanduser('datasets/vg')
 COCO_DIR = os.path.expanduser('datasets/coco')
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataset', default='coco', choices=['vg', 'coco'])
+parser.add_argument('--dataset', default='vg', choices=['vg', 'coco'])
 
 # Optimization hyperparameters
 parser.add_argument('--batch_size', default=32, type=int)
-parser.add_argument('--num_iterations', default=1000000, type=int)
+parser.add_argument('--num_iterations', default=100000, type=int)
 parser.add_argument('--learning_rate', default=1e-4, type=float)
 
 # Switch the generator to eval mode after this many iterations
-parser.add_argument('--eval_mode_after', default=100000, type=int)
+parser.add_argument('--eval_mode_after', default=10000, type=int)
 
 # Dataset options common to both VG and COCO
 parser.add_argument('--image_size', default='64,64', type=int_tuple)
@@ -133,12 +133,11 @@ parser.add_argument('--d_img_weight', default=1.0, type=float) # multiplied by d
 # Output options
 parser.add_argument('--print_every', default=10, type=int)
 parser.add_argument('--timing', default=False, type=bool_flag)
-parser.add_argument('--checkpoint_every', default=10000, type=int)
+parser.add_argument('--checkpoint_every', default=1000, type=int)
 parser.add_argument('--output_dir', default=os.getcwd())
 parser.add_argument('--checkpoint_name', default='checkpoint')
 parser.add_argument('--checkpoint_start_from', default=None)
 parser.add_argument('--restore_from_checkpoint', default=False, type=bool_flag)
-
 
 def add_loss(total_loss, curr_loss, loss_dict, loss_name, weight=1):
   curr_loss = curr_loss * weight
@@ -149,14 +148,12 @@ def add_loss(total_loss, curr_loss, loss_dict, loss_name, weight=1):
     total_loss = curr_loss
   return total_loss
 
-
 def check_args(args):
   H, W = args.image_size
   for _ in args.refinement_network_dims[1:]:
     H = H // 2
   if H == 0:
     raise ValueError("Too many layers in refinement network")
-
 
 def build_model(args, vocab):
   if args.checkpoint_start_from is not None:
