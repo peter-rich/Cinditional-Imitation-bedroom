@@ -54,9 +54,9 @@ parser.add_argument('--min_image_size', default=200, type=int)
 parser.add_argument('--train_split', default='train')
 
 # Arguments for objects
-parser.add_argument('--min_object_instances', default=200, type=int)
-parser.add_argument('--min_attribute_instances', default=200, type=int)
-parser.add_argument('--min_object_size', default=8, type=int)
+parser.add_argument('--min_object_instances', default=400, type=int)
+parser.add_argument('--min_attribute_instances', default=400, type=int)
+parser.add_argument('--min_object_size', default=10, type=int)
 parser.add_argument('--min_objects_per_image', default=1, type=int)
 parser.add_argument('--max_objects_per_image', default=30, type=int)
 parser.add_argument('--max_attributes_per_image', default=30, type=int)
@@ -157,7 +157,7 @@ def remove_other_images(args, image_id_to_image, image_id_to_object, splits):
                 height, width = image2['height'], image2['width']
                 
                 for i in objects:
-                    if i['names'][0] == "bed" or i['names'][0] == "lamp":
+                    if (i['names'][0] == "bed" or i['names'][0] == "lamp") or i['names'][0] == "room":
                         judge = 1
                         break
 

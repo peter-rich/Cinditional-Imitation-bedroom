@@ -48,7 +48,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', default='vg', choices=['vg', 'coco'])
 
 # Optimization hyperparameters
-parser.add_argument('--batch_size', default=32, type=int)
+parser.add_argument('--batch_size', default=64, type=int)
 parser.add_argument('--num_iterations', default=100000, type=int)
 parser.add_argument('--learning_rate', default=1e-4, type=float)
 
@@ -58,7 +58,7 @@ parser.add_argument('--eval_mode_after', default=10000, type=int)
 # Dataset options common to both VG and COCO
 parser.add_argument('--image_size', default='64,64', type=int_tuple)
 parser.add_argument('--num_train_samples', default=None, type=int)
-parser.add_argument('--num_val_samples', default=1024, type=int)
+parser.add_argument('--num_val_samples', default=128, type=int)
 parser.add_argument('--shuffle_val', default=True, type=bool_flag)
 parser.add_argument('--loader_num_workers', default=4, type=int)
 parser.add_argument('--include_relationships', default=True, type=bool_flag)
@@ -68,7 +68,7 @@ parser.add_argument('--vg_image_dir', default=os.path.join(VG_DIR, 'images'))
 parser.add_argument('--train_h5', default=os.path.join(VG_DIR, 'train.h5'))
 parser.add_argument('--val_h5', default=os.path.join(VG_DIR, 'val.h5'))
 parser.add_argument('--vocab_json', default=os.path.join(VG_DIR, 'vocab.json'))
-parser.add_argument('--max_objects_per_image', default=10, type=int)
+parser.add_argument('--max_objects_per_image', default=5, type=int)
 parser.add_argument('--vg_use_orphaned_objects', default=True, type=bool_flag)
 
 # COCO-specific options
@@ -88,7 +88,7 @@ parser.add_argument('--instance_whitelist', default=None, type=str_tuple)
 parser.add_argument('--stuff_whitelist', default=None, type=str_tuple)
 parser.add_argument('--coco_include_other', default=False, type=bool_flag)
 parser.add_argument('--min_object_size', default=0.02, type=float)
-parser.add_argument('--min_objects_per_image', default=3, type=int)
+parser.add_argument('--min_objects_per_image', default=2, type=int)
 parser.add_argument('--coco_stuff_only', default=True, type=bool_flag)
 
 # Generator options
@@ -641,7 +641,7 @@ def main(args):
         checkpoint['counters']['t'] = t
         checkpoint['counters']['epoch'] = epoch
         checkpoint_path = os.path.join(args.output_dir,
-                              '%s_with_model.pt' % args.checkpoint_name)
+                              '%s_with_model_'+ str(t) +'.pt' % args.checkpoint_name)
         print('Saving checkpoint to ', checkpoint_path)
         torch.save(checkpoint, checkpoint_path)
 
