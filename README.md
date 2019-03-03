@@ -1,4 +1,4 @@
-# Conditional object to the scene.
+# Cinditional-Imitation-bedroom
 ## Zhanfu Yang
 Train:
 `python script/train.py`
