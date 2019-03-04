@@ -54,17 +54,17 @@ parser.add_argument('--min_image_size', default=200, type=int)
 parser.add_argument('--train_split', default='train')
 
 # Arguments for objects
-parser.add_argument('--min_object_instances', default=400, type=int)
-parser.add_argument('--min_attribute_instances', default=400, type=int)
+parser.add_argument('--min_object_instances', default=1300, type=int)
+parser.add_argument('--min_attribute_instances', default=800, type=int)
 parser.add_argument('--min_object_size', default=10, type=int)
 parser.add_argument('--min_objects_per_image', default=1, type=int)
-parser.add_argument('--max_objects_per_image', default=30, type=int)
-parser.add_argument('--max_attributes_per_image', default=30, type=int)
+parser.add_argument('--max_objects_per_image', default=20, type=int)
+parser.add_argument('--max_attributes_per_image', default=20, type=int)
 
 # Arguments for relationships
 parser.add_argument('--min_relationship_instances', default=50, type=int)
 parser.add_argument('--min_relationships_per_image', default=1, type=int)
-parser.add_argument('--max_relationships_per_image', default=30, type=int)
+parser.add_argument('--max_relationships_per_image', default=20, type=int)
 
 # Output
 parser.add_argument('--output_vocab_json',

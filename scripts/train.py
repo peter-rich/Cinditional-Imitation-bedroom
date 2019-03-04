@@ -49,16 +49,16 @@ parser.add_argument('--dataset', default='vg', choices=['vg', 'coco'])
 
 # Optimization hyperparameters
 parser.add_argument('--batch_size', default=64, type=int)
-parser.add_argument('--num_iterations', default=100000, type=int)
+parser.add_argument('--num_iterations', default=12000, type=int)
 parser.add_argument('--learning_rate', default=1e-4, type=float)
 
 # Switch the generator to eval mode after this many iterations
-parser.add_argument('--eval_mode_after', default=10000, type=int)
+parser.add_argument('--eval_mode_after', default=1000, type=int)
 
 # Dataset options common to both VG and COCO
 parser.add_argument('--image_size', default='64,64', type=int_tuple)
 parser.add_argument('--num_train_samples', default=None, type=int)
-parser.add_argument('--num_val_samples', default=128, type=int)
+parser.add_argument('--num_val_samples', default=64, type=int)
 parser.add_argument('--shuffle_val', default=True, type=bool_flag)
 parser.add_argument('--loader_num_workers', default=4, type=int)
 parser.add_argument('--include_relationships', default=True, type=bool_flag)
@@ -92,7 +92,7 @@ parser.add_argument('--min_objects_per_image', default=2, type=int)
 parser.add_argument('--coco_stuff_only', default=True, type=bool_flag)
 
 # Generator options
-parser.add_argument('--mask_size', default=16, type=int) # Set this to 0 to use no masks
+parser.add_argument('--mask_size', default=8, type=int) # Set this to 0 to use no masks
 parser.add_argument('--embedding_dim', default=128, type=int)
 parser.add_argument('--gconv_dim', default=128, type=int)
 parser.add_argument('--gconv_hidden_dim', default=512, type=int)
@@ -111,7 +111,7 @@ parser.add_argument('--bbox_pred_loss_weight', default=10, type=float)
 parser.add_argument('--predicate_pred_loss_weight', default=0, type=float) # DEPRECATED
 
 # Generic discriminator options
-parser.add_argument('--discriminator_loss_weight', default=0.01, type=float)
+parser.add_argument('--discriminator_loss_weight', default=0.1, type=float)
 parser.add_argument('--gan_loss_type', default='gan')
 parser.add_argument('--d_clip', default=None, type=float)
 parser.add_argument('--d_normalization', default='batch')
@@ -133,7 +133,7 @@ parser.add_argument('--d_img_weight', default=1.0, type=float) # multiplied by d
 # Output options
 parser.add_argument('--print_every', default=10, type=int)
 parser.add_argument('--timing', default=False, type=bool_flag)
-parser.add_argument('--checkpoint_every', default=1000, type=int)
+parser.add_argument('--checkpoint_every', default=500, type=int)
 parser.add_argument('--output_dir', default=os.getcwd())
 parser.add_argument('--checkpoint_name', default='checkpoint')
 parser.add_argument('--checkpoint_start_from', default=None)
@@ -641,13 +641,13 @@ def main(args):
         checkpoint['counters']['t'] = t
         checkpoint['counters']['epoch'] = epoch
         checkpoint_path = os.path.join(args.output_dir,
-                              '%s_with_model_'+ str(t) +'.pt' % args.checkpoint_name)
+                              '%s_with_model_%s.pt' % (args.checkpoint_name, t))
         print('Saving checkpoint to ', checkpoint_path)
         torch.save(checkpoint, checkpoint_path)
 
         # Save another checkpoint without any model or optim state
         checkpoint_path = os.path.join(args.output_dir,
-                              '%s_no_model.pt' % args.checkpoint_name)
+                              '%s_no_model_%s.pt' % (args.checkpoint_name, t))
         key_blacklist = ['model_state', 'optim_state', 'model_best_state',
                          'd_obj_state', 'd_obj_optim_state', 'd_obj_best_state',
                          'd_img_state', 'd_img_optim_state', 'd_img_best_state']
